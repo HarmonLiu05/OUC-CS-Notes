@@ -1,0 +1,183 @@
+% !TeX program = xelatex
+% 使用说明：
+% 1) 修改下方“信息宏”中的变量（学校/课程/标题/姓名等）。
+% 2) 在“正文”处开始写内容，或用 \input{path/to/file.tex} 引入分章节文件。
+% 3) 使用 XeLaTeX 或 latexmk(xelatex) 编译两遍，目录即可带跳转。
+
+\documentclass[UTF8,zihao=-4]{ctexart}
+
+% 版式与基础
+\usepackage[a4paper,margin=2.5cm,bottom=3.5cm]{geometry}
+\usepackage{setspace}
+\linespread{1.35}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.5em}
+
+% 字体与颜色
+\usepackage{fontspec}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\graphicspath{{figures/}{images/}{./}}
+
+% 代码高亮与样式（tcolorbox + listings）
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{listings,skins,breakable}
+\usepackage{upquote}
+
+% 统一代码样式 (*** 已集成 Git 命令高亮 ***)
+\lstdefinestyle{codeStyle}{%
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{RoyalBlue}\bfseries,
+  commentstyle=\color{ForestGreen}\itshape,
+  stringstyle=\color{BrickRed},
+  numbers=left,
+  numberstyle=\scriptsize\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  tabsize=2,
+  emph={git,add,commit,push,pull,branch,checkout,merge,rebase,status,clone,remote,reset,init},
+  emphstyle=\color{RoyalBlue}\bfseries
+}
+
+% 优雅的代码盒子环境：\begin{Code}[标题]{language=bash} ... \end{Code}
+\newtcblisting{Code}[2][]{%
+  enhanced,
+  breakable,
+  listing only,
+  colback=black!2,
+  colframe=black!40,
+  colbacktitle=black!8,
+  coltitle=black,
+  fonttitle=\bfseries\small,
+  title={#1},
+  arc=2mm,
+  boxrule=0.5pt,
+  left=1mm,right=1mm,top=1mm,bottom=1mm,
+  listing options={style=codeStyle,#2}
+}
+
+% 目录与标题样式
+\usepackage[titles]{tocloft}
+\renewcommand{\contentsname}{目录}
+\setcounter{tocdepth}{2}
+
+\usepackage{titlesec}
+\titleformat{\section}{\bfseries\Large}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\bfseries\large}{\thesubsection}{0.6em}{}
+
+% 页眉页脚
+\usepackage{fancyhdr}
+\fancyhf{}
+\setlength{\headheight}{56.25014pt}
+\setlength{\footskip}{20pt}
+\lhead{}
+\chead{\IfFileExists{校徽.png}{\includegraphics[height=4ex]{校徽.png}}{}}
+\rhead{\reporttitle}
+\cfoot{\small\thepage}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% 超链接与书签（目录可点击）
+\usepackage{hyperref}
+\usepackage{bookmark}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=RoyalBlue,
+  urlcolor=BrickRed,
+  citecolor=RoyalBlue,
+  bookmarksopen=true,
+  linktoc=all
+}
+
+% ======= 信息宏（按需修改） ======
+\newcommand{\university}{中国海洋大学}
+\newcommand{\college}{信息科学与工程学部}
+\newcommand{\course}{系统开发工具基础}
+\newcommand{\reporttitle}{报告标题（请修改）}
+\newcommand{\namea}{作者姓名}
+\newcommand{\studentid}{学号}
+\newcommand{\major}{专业}
+\newcommand{\classa}{班级}
+\newcommand{\instructor}{指导教师}
+\newcommand{\semester}{学年学期}
+\newcommand{\duedate}{提交日期}
+
+% PDF 元数据
+\hypersetup{
+  pdftitle={\reporttitle},
+  pdfauthor={\namea}
+}
+
+\begin{document}
+
+% ========== 封面 ==========
+\begin{titlepage}
+\thispagestyle{empty}
+\vfill
+\begin{center}
+\IfFileExists{校徽.png}{\includegraphics[height=5cm]{校徽.png}\\[8mm]}{}
+{\huge \bfseries \university}\\[3mm] % <-- 已采纳您的字体放大设计
+{\Large \college}\\[12mm]
+{\Huge\bfseries \reporttitle}\\[15mm]
+\end{center}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+{ % <-- 使用花括号限定字体作用范围
+  \sffamily % <-- 已采纳您为表格设置的黑体样式
+  \begin{tabular}{r l}
+  课程名称 & \course \\
+  指导教师 & \instructor \\
+  学生姓名 & \namea \\
+  学号 & \studentid \\
+  专业/班级 & \major\quad \classa \\
+  学年学期 & \semester \\
+  提交日期 & \duedate \\
+  \end{tabular}
+}
+\end{center}
+
+\vfill
+\begin{center}
+\small \textit{仓库/链接（可选）}\\[2mm]
+\small \url{https://example.com/your-project}
+\end{center}
+\vfill
+\end{titlepage}
+
+% 目录（带跳转）
+\pdfbookmark[1]{目录}{toc}
+\tableofcontents
+\newpage
+
+% ========== 正文 ==========
+\section{引言}
+说明报告背景、目标与结构。
+
+\section{方法与实现}
+可以通过 \verb+\input{sections/part1.tex}+ 将内容拆分维护。
+
+\subsection{代码示例}
+这里的 git 命令现在会被高亮显示。
+\begin{Code}[Bash 示例]{language=bash}
+git status
+git commit -m "feat: add new feature"
+\end{Code}
+
+\subsection{数学公式}
+行内公式：$E=mc^2$；陈述型公式：
+\[\int_a^b f(x)\,dx\]
+
+\section{实验与结果}
+简述数据、配置与可视化结果。
+
+\section{结论与展望}
+总结收获、局限与后续工作。
+
+\end{document}
